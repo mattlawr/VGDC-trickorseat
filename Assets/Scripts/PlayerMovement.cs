@@ -15,6 +15,12 @@ public class PlayerMovement : MonoBehaviour
 
     float timeSinceRail = 100f;
 
+    [Space]
+
+    public Transform scaleWithMovement;
+
+    public Resrc.UnityEventToggle onRail;
+
     // Custom enumerable type
     public enum PlayerState
     {
@@ -48,6 +54,18 @@ public class PlayerMovement : MonoBehaviour
                 break;
             default:
                 break;
+        }
+
+        // For FX:
+        if(scaleWithMovement && rb.velocity.x != 0f)
+        {
+            float sc = rb.velocity.x / 30f;
+            if (Mathf.Abs(sc) < 1f) sc = 1f;
+            scaleWithMovement.localScale = new Vector3(1f, 1f, sc);
+
+            Vector3 dir = rb.velocity.normalized;
+            scaleWithMovement.rotation = Quaternion.LookRotation(dir, Vector3.up);
+
         }
     }
 
@@ -92,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
 
         currRail = rl;
         state = PlayerState.Rail;
+        onRail.On();
     }
 
     void OnRailExit()
@@ -100,6 +119,7 @@ public class PlayerMovement : MonoBehaviour
         railCache = currRail;
         currRail = null;
         state = PlayerState.Air;
+        onRail.Off();
     }
 
     /// <summary>
@@ -197,5 +217,10 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 m = Vector3.Project(v, f).normalized;
         rb.AddForce(m * amt, mode);
+    }
+
+    public void StopAndClearParticle(ParticleSystem p)
+    {
+        p.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
 }
