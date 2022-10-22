@@ -42,6 +42,8 @@ public class Spawner : MonoBehaviour
             GameObject go = Instantiate(prefab, transform.position + Vector3.up * y, Quaternion.identity);
             go.transform.Rotate(new Vector3(0f, 0f, Random.Range(-randZRot, randZRot)));
 
+            Destroy(go, 10f);
+
             lastX = transform.position.x;
         }
     }

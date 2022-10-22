@@ -419,6 +419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 4135572798122673509, guid: bd36e0d77674fb848a238e5fe88b0232, type: 3}
+  target: {fileID: 1122026364}
   frequency: 1
   randYOffset: 20
   randZRot: 40
