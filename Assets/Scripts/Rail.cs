@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Rail : MonoBehaviour
 {
-    protected Collider collider;
+    protected Collider col;
 
     // Start is called before the first frame update
     void Start()
     {
-        collider = GetComponent<Collider>();
+        col = GetComponent<Collider>();
     }
 
     // Update is called once per frame
@@ -18,11 +18,18 @@ public class Rail : MonoBehaviour
         
     }
 
-    public bool PastEdge(Vector3 position)
+    public bool PastEdge(Vector3 position, Vector3 velocity)
     {
-        if (position.x > collider.bounds.max.x) return true;
-
-        if (position.x < collider.bounds.min.x) return true;
+        if (position.x > col.bounds.max.x)
+        {
+            if(velocity.x > 0)
+                return true;
+        }
+        else if (position.x < col.bounds.min.x)
+        {
+            if (velocity.x < 0)
+                return true;
+        }
 
         return false;
     }

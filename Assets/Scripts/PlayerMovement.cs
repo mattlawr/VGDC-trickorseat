@@ -61,20 +61,52 @@ public class PlayerMovement : MonoBehaviour
         if (rl) OnRailCollision(rl);
     }
 
-    public void OnRailCollision(Rail rl)
+    void OnRailCollision(Rail rl)
     {
         if (state == PlayerState.Rail) return;
 
         // When we touch a rail, we should "stick" to it
-        rb.velocity = new Vector3(rb.velocity.x, 0, 0);
+        Vector3 f = rl.Forward();
+
+        float h = Input.GetAxisRaw("Horizontal");
+        if (h != 0)
+        {
+            // Tiny boost when landing
+            rb.AddForce(f * moveAmount * 2f * h, ForceMode.VelocityChange);
+        }
+
+        Vector3 v = rb.velocity;
+        v.y = 0f;
+        rb.velocity = Vector3.Project(v, f);
+
         currRail = rl;
         state = PlayerState.Rail;
     }
 
-    public void OnRailExit()
+    void OnRailExit()
     {
         currRail = null;
         state = PlayerState.Air;
+    }
+
+    /// <summary>
+    /// Let the player do a jump action.
+    /// Types:
+    /// - Normal jump
+    /// - Trick jump: right at a rail edge!
+    ///   * directional input should cause directional jumps:
+    ///   Backwards: Indy grab (extra backwards control)
+    ///   Neutral: Ollie?
+    ///   Forwards: Shove-it, or kickflip (gain speed)
+    /// </summary>
+    void Jump()
+    {
+        Vector3 v = rb.velocity;
+        v.y = Mathf.Max(v.y, 0f);
+        rb.velocity = v;    // cancel out downwards velocity
+
+        rb.AddForce(Vector3.up * jumpAmount, ForceMode.VelocityChange);
+        OnRailExit();
     }
 
     protected void _StAirUpdate()
@@ -99,22 +131,22 @@ public class PlayerMovement : MonoBehaviour
         // Jump
         if(Input.GetButtonDown("Jump"))
         {
-            rb.AddForce(Vector3.up * jumpAmount, ForceMode.VelocityChange);
-            OnRailExit();
+            Jump();
             return;
         }
 
         // Fall off rail
-        if(currRail.PastEdge(rb.position))
+        if(currRail.PastEdge(rb.position, rb.velocity))
         {
             OnRailExit();
             return;
         }
 
-        rb.AddForce(Vector3.up * gravity * 0.5f, ForceMode.Acceleration);   // fall at half amount on rail
+        Vector3 f = currRail.Forward();
+
+        rb.AddForce(Vector3.Project(Vector3.up * gravity * 0.5f, f), ForceMode.Acceleration);   // slide down rail
 
         // Movement
-        Vector3 f = currRail.Forward();
         float horizontal = Input.GetAxisRaw("Horizontal");
         Vector3 move = Vector3.Project(new Vector3(horizontal, 0, 0), f).normalized;
         rb.AddForce(move * moveAmount, ForceMode.Force);
