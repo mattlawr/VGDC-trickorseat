@@ -34,6 +34,20 @@ public class Rail : MonoBehaviour
         return false;
     }
 
+    public bool NearEdge(float worldAmount, Vector3 position)
+    {
+        if (position.x > col.bounds.max.x - worldAmount)
+        {
+            return true;
+        }
+        else if (position.x < col.bounds.min.x + worldAmount)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public Vector3 Forward()
     {
         return transform.right;

@@ -9,11 +9,11 @@ public class PlayerMovement : MonoBehaviour
     [Space]
 
     public float moveAmount = 20f;
-
     public float moveAmountAir = 5f;
 
     public float jumpAmount = 5f;
 
+    float timeSinceRail = 100f;
 
     // Custom enumerable type
     public enum PlayerState
@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Private vars
     protected Rail currRail;    // represents the rail path we're on
+    Rail railCache = null;
 
     protected PlayerState state = 0;
     protected Rigidbody rb;
@@ -50,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (!other) return;
 
@@ -65,6 +66,16 @@ public class PlayerMovement : MonoBehaviour
     {
         if (state == PlayerState.Rail) return;
 
+        // Pass through rails...
+        if (rl.Forward().y < -0.1f && rb.velocity.y > 2f)
+        {
+            return;
+        }
+        if (Input.GetButton("Jump") && rb.velocity.y > 2f)
+        {
+            return;
+        }
+
         // When we touch a rail, we should "stick" to it
         Vector3 f = rl.Forward();
 
@@ -72,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
         if (h != 0)
         {
             // Tiny boost when landing
-            rb.AddForce(f * moveAmount * 2f * h, ForceMode.VelocityChange);
+            rb.AddForce(f * moveAmount * 1.5f * h, ForceMode.VelocityChange);
         }
 
         Vector3 v = rb.velocity;
@@ -85,6 +96,8 @@ public class PlayerMovement : MonoBehaviour
 
     void OnRailExit()
     {
+        timeSinceRail = 0f;
+        railCache = currRail;
         currRail = null;
         state = PlayerState.Air;
     }
@@ -101,16 +114,40 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void Jump()
     {
+        if (!currRail) currRail = railCache;
+        if (!currRail) return;
+
+        float bonus = 1f;
+
         Vector3 v = rb.velocity;
         v.y = Mathf.Max(v.y, 0f);
         rb.velocity = v;    // cancel out downwards velocity
 
-        rb.AddForce(Vector3.up * jumpAmount, ForceMode.VelocityChange);
+        if(rb.velocity.magnitude > 2f && currRail.NearEdge(2f, rb.position))
+        {
+            bonus = 1.5f;
+            float h = Input.GetAxisRaw("Horizontal");
+            Vector3 f = currRail.Forward();
+
+            rb.AddForce(f * moveAmount * 2f * h, ForceMode.VelocityChange);
+        }
+
+        rb.AddForce(Vector3.up * jumpAmount * bonus, ForceMode.VelocityChange);
+
         OnRailExit();
+        timeSinceRail = 100f;
     }
 
     protected void _StAirUpdate()
     {
+        // Jump (buffered)
+        if (timeSinceRail < 0.5f &&  Input.GetButtonDown("Jump"))
+        {
+            Jump();
+            return;
+        }
+        timeSinceRail += Time.deltaTime;
+
         // Movement
         float h = Input.GetAxisRaw("Horizontal");
         Vector3 move = Vector3.Project(new Vector3(h, 0, 0), Vector3.right).normalized;
@@ -144,14 +181,21 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 f = currRail.Forward();
 
-        rb.AddForce(Vector3.Project(Vector3.up * gravity * 0.5f, f), ForceMode.Acceleration);   // slide down rail
+        PushAlongRail(Vector3.up * gravity * 0.5f, 1f, ForceMode.Acceleration);   // slide down rail
 
         // Movement
         float horizontal = Input.GetAxisRaw("Horizontal");
-        Vector3 move = Vector3.Project(new Vector3(horizontal, 0, 0), f).normalized;
-        rb.AddForce(move * moveAmount, ForceMode.Force);
+        PushAlongRail(new Vector3(horizontal + 0.5f, 0, 0), moveAmount);
 
         Vector3 v = rb.velocity;
         rb.velocity = Vector3.Project(v, f);
+    }
+
+    private void PushAlongRail(Vector3 v, float amt, ForceMode mode = ForceMode.Force)
+    {
+        Vector3 f = currRail.Forward();
+
+        Vector3 m = Vector3.Project(v, f).normalized;
+        rb.AddForce(m * amt, mode);
     }
 }
