@@ -19,6 +19,8 @@ public class PlayerMovement : MonoBehaviour
 
     public Transform scaleWithMovement;
 
+    public ParticleSystem windFX;
+
     public Resrc.UnityEventToggle onRail;
 
     // Custom enumerable type
@@ -66,6 +68,15 @@ public class PlayerMovement : MonoBehaviour
             Vector3 dir = rb.velocity.normalized;
             scaleWithMovement.rotation = Quaternion.LookRotation(dir, Vector3.up);
 
+        }
+
+        if(windFX)
+        {
+            float m = rb.velocity.magnitude;
+            if (m > 32f)
+            {
+                windFX.Emit(Mathf.Min(Mathf.FloorToInt(m / 120f), 2));
+            }
         }
     }
 
