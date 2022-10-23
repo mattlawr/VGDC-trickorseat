@@ -17,12 +17,14 @@ public class SnapFollow : MonoBehaviour
     {
         if(targetX)
         {
-            Vector3 loc = transform.TransformPoint(Vector3.right);
+            Vector3 loc = transform.parent.TransformPoint(Vector3.right);
             float currX = Mathf.Floor(targetX.position.x / loc.x);
 
-            Vector3 v = transform.position;
+            //print($"{targetX.position.x} / {loc.x} = {currX}");
+
+            Vector3 v = transform.localPosition;
             v.x = currX;
-            transform.position = v;
+            transform.localPosition = v;
         }
     }
 }

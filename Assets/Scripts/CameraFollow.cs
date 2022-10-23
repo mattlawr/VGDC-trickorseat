@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform plyr;
+    public Rigidbody plyr;
 
     Vector3 offset;
 
@@ -15,9 +15,10 @@ public class CameraFollow : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        transform.position = plyr.position + offset;
+        Vector3 vf = plyr.position + offset + Vector3.ClampMagnitude(plyr.velocity * 0.1f, 5f);
+        transform.position = Vector3.Lerp(transform.position, vf, Time.deltaTime * 15f);
     }
 
     

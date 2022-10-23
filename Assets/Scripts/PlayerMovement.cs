@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public float gravity = -9.8f;
+    public float grav_fallAdd = 0f;     // For falling faster
+    public float grav_peakScale = 1f;   // For peaking longer
+    public float maxFallSpeed = -20f;
 
     [Space]
 
@@ -14,8 +17,11 @@ public class PlayerMovement : MonoBehaviour
     public float jumpAmount = 5f;
 
     float timeSinceRail = 100f;
+    readonly float bufferTime = 0.25f;
 
     [Space]
+
+    public Transform wheel;
 
     public Transform scaleWithMovement;
 
@@ -104,6 +110,10 @@ public class PlayerMovement : MonoBehaviour
         {
             return;
         }
+        if (rl == railCache && rb.velocity.y > 2f)
+        {
+            return;
+        }
 
         // When we touch a rail, we should "stick" to it
         Vector3 f = rl.Forward();
@@ -172,7 +182,7 @@ public class PlayerMovement : MonoBehaviour
     protected void _StAirUpdate()
     {
         // Jump (buffered)
-        if (timeSinceRail < 0.5f &&  Input.GetButtonDown("Jump"))
+        if (timeSinceRail < bufferTime &&  Input.GetButtonDown("Jump"))
         {
             Jump();
             return;
@@ -185,14 +195,14 @@ public class PlayerMovement : MonoBehaviour
         rb.AddForce(move * moveAmountAir, ForceMode.Force);
 
         // Falling forces
-        rb.AddForce(Vector3.up * gravity, ForceMode.Acceleration);
+        GravityUpdate();
     }
 
     protected void _StRailUpdate()
     {
         if(!currRail)
         {
-            Debug.LogError("currRail is null while we're in Rail state... that shouldn't be allowed");
+            OnRailExit();
             return;
         }
 
@@ -220,6 +230,8 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 v = rb.velocity;
         rb.velocity = Vector3.Project(v, f);
+
+        wheel.Rotate(Vector3.right * rb.velocity.magnitude * 10f * Time.deltaTime * Mathf.Sign(rb.velocity.x));
     }
 
     private void PushAlongRail(Vector3 v, float amt, ForceMode mode = ForceMode.Force)
@@ -233,5 +245,31 @@ public class PlayerMovement : MonoBehaviour
     public void StopAndClearParticle(ParticleSystem p)
     {
         p.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+    }
+
+    void GravityUpdate()
+    {
+        Vector3 v = rb.velocity;
+        if (v.y < maxFallSpeed && maxFallSpeed < 0) return;
+
+        Vector3 grav = gravity * Vector3.up;
+
+        // Reduce gravity at peak
+        float a = 0.5f;
+        if (v.y > -a && v.y < a * 0.1f)
+        {
+            grav *= grav_peakScale;
+        }
+
+        rb.AddForce(grav, ForceMode.Acceleration);
+
+        if (grav_fallAdd > 0f)
+        {
+            if (v.y < -a)
+            {
+                Vector3 fall = -grav_fallAdd * Vector3.up;
+                rb.AddForce(fall, ForceMode.Acceleration);    // In addition to above force
+            }
+        }
     }
 }
