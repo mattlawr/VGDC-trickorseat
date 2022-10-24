@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -30,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem windFX;
 
     public Resrc.UnityEventToggle onRail;
+    public UnityEvent onTrick;
 
     // Custom enumerable type
     public enum PlayerState
@@ -51,6 +54,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return;
+        }
+
         if (!rb) return;
 
         // Enter a method depending on current state
@@ -177,6 +186,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(f * moveAmount * 2f * h, ForceMode.VelocityChange);
 
             anim.SetTrigger("jumptrick");
+            onTrick.Invoke();
         }
         else
         {
