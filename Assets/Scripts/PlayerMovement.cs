@@ -21,6 +21,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Space]
 
+    public Animator anim;
+
     public Transform wheel;
 
     public Transform scaleWithMovement;
@@ -132,6 +134,8 @@ public class PlayerMovement : MonoBehaviour
         currRail = rl;
         state = PlayerState.Rail;
         onRail.On();
+
+        anim.SetTrigger("rail");
     }
 
     void OnRailExit()
@@ -171,6 +175,12 @@ public class PlayerMovement : MonoBehaviour
             Vector3 f = currRail.Forward();
 
             rb.AddForce(f * moveAmount * 2f * h, ForceMode.VelocityChange);
+
+            anim.SetTrigger("jumptrick");
+        }
+        else
+        {
+            anim.SetTrigger("jump");
         }
 
         rb.AddForce(Vector3.up * jumpAmount * bonus, ForceMode.VelocityChange);

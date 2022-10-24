@@ -5923,6 +5923,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1122026362}
   - component: {fileID: 1122026363}
+  - component: {fileID: 1122026365}
   - component: {fileID: 1122026361}
   - component: {fileID: 1122026364}
   m_Layer: 0
@@ -5983,6 +5984,7 @@ MonoBehaviour:
   moveAmount: 2
   moveAmountAir: 1.5
   jumpAmount: 13
+  anim: {fileID: 1122026365}
   wheel: {fileID: 649386000}
   scaleWithMovement: {fileID: 1269110043}
   windFX: {fileID: 249040285}
@@ -6034,6 +6036,25 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 120
   m_CollisionDetection: 2
+--- !u!95 &1122026365
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1122026360}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6abb978867a472149add55b548b0377e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1174319944
 GameObject:
   m_ObjectHideFlags: 0
