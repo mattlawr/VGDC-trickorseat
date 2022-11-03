@@ -152,7 +152,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.71, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1504902442}
+  - {fileID: 649386000}
   m_Father: {fileID: 1122026362}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: -270}
@@ -15256,12 +15256,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 649385999}
-  m_LocalRotation: {x: 0.49999934, y: -0.50000054, z: -0.5000008, w: -0.49999946}
-  m_LocalPosition: {x: 0, y: 0.71, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1122026362}
-  m_RootOrder: 1
+  m_Father: {fileID: 109368978}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: -270}
 --- !u!23 &649386001
 MeshRenderer:
@@ -20876,7 +20876,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 109368978}
-  - {fileID: 649386000}
+  - {fileID: 1504902442}
   - {fileID: 728782552}
   - {fileID: 1269110043}
   m_Father: {fileID: 0}
@@ -25997,7 +25997,7 @@ GameObject:
   - component: {fileID: 1504902444}
   - component: {fileID: 1504902443}
   m_Layer: 0
-  m_Name: pumpkin
+  m_Name: model.rider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26010,12 +26010,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1504902441}
-  m_LocalRotation: {x: -0.10414238, y: 0.009850315, z: 0.35385334, w: 0.9294327}
-  m_LocalPosition: {x: 0, y: 0, z: 2.0400002}
+  m_LocalRotation: {x: 0.34478518, y: -0.59449714, z: -0.68878967, w: -0.23079261}
+  m_LocalPosition: {x: 0, y: 2.7500005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 109368978}
-  m_RootOrder: 0
+  m_Father: {fileID: 1122026362}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -77.991, y: -74.56, z: -153.754}
 --- !u!23 &1504902443
 MeshRenderer:
