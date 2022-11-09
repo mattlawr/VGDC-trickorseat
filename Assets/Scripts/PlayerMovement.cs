@@ -32,7 +32,11 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem windFX;
 
     public Resrc.UnityEventToggle onRail;
+
+    public UnityEvent onJump;
     public UnityEvent onTrick;
+
+    public UnityEvent onPickup;
 
     // Custom enumerable type
     public enum PlayerState
@@ -101,11 +105,20 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!other) return;
 
-        // Pickup checks here
+        // Pickups
+        Pickup pk = other.GetComponent<Pickup>();
+        if (pk) OnPickup(pk);
 
-
+        // Rails
         Rail rl = other.GetComponent<Rail>();
         if (rl) OnRailCollision(rl);
+    }
+
+    void OnPickup(Pickup p)
+    {
+        // uh! do something
+        // you could support a score var here and print to screen
+        onPickup.Invoke();
     }
 
     void OnRailCollision(Rail rl)
@@ -194,6 +207,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         rb.AddForce(Vector3.up * jumpAmount * bonus, ForceMode.VelocityChange);
+
+        onJump.Invoke();
 
         OnRailExit();
         timeSinceRail = 100f;

@@ -10,6 +10,8 @@ public class Spawner : MonoBehaviour
     public GameObject prefab;
     public Rigidbody target;
 
+    public Transform parent;
+
     [Space]
 
     public float frequency = 1f;    // per... 10 units?
@@ -29,20 +31,21 @@ public class Spawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(transform.position.x - lastX > 10f / frequency)
+        if (transform.position.x - lastX > 10f / frequency)
         {
             // Spawn
             float y = Random.Range(-randYOffset, randYOffset);
 
-            if(target)
+            if (target)
             {
-                y += target.velocity.y; // try to catch player
+                y += target.velocity.y; // try to spawn in front of player movement direction
             }
 
-            GameObject go = Instantiate(prefab, transform.position + Vector3.up * y, Quaternion.identity);
+            // Make a copy of the prefab
+            GameObject go = Instantiate(prefab, transform.position + Vector3.up * y, Quaternion.identity, parent);
             go.transform.Rotate(new Vector3(0f, 0f, Random.Range(-randZRot, randZRot)));
 
-            Destroy(go, 10f);
+            Destroy(go, 10f);   // destroy the prefab after 10 seconds
 
             lastX = transform.position.x;
         }
