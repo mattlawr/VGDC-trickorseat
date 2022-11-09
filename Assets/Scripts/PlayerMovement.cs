@@ -142,9 +142,9 @@ public class PlayerMovement : MonoBehaviour
 
         currRail = rl;
         state = PlayerState.Rail;
-        onRail.On();
+        onRail.On();    // shown in inspector!
 
-        anim.SetTrigger("rail");
+        anim.SetBool("onrail", true);
     }
 
     void OnRailExit()
@@ -154,6 +154,8 @@ public class PlayerMovement : MonoBehaviour
         currRail = null;
         state = PlayerState.Air;
         onRail.Off();
+
+        anim.SetBool("onrail", false);
     }
 
     /// <summary>
