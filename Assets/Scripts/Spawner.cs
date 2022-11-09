@@ -31,12 +31,12 @@ public class Spawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(transform.position.x - lastX > 10f / frequency)
+        if (transform.position.x - lastX > 10f / frequency)
         {
             // Spawn
             float y = Random.Range(-randYOffset, randYOffset);
 
-            if(target)
+            if (target)
             {
                 y += target.velocity.y; // try to spawn in front of player movement direction
             }
